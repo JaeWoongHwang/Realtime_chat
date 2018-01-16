@@ -2,23 +2,22 @@ class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
 
   def talk
+    # 1. DB에 Talk를 저장하는 코드
     @talk = Talk.new(
       message: params[:msg]
     )
     @talk.save
+    # 채널이름과 이벤트 이름 설정
+    # JW-채널에서 JW-이벤트가 발생하면 다음과 같은 데이터를 날려라
+    # 2. pusher server에 talk를 보낸다 (data.message 형태로 보내질 것)
     Pusher.trigger('JW-channel', 'JW-event', {
       message: params[:msg]
     })
-    # render :talk
+    render nothing: true
   end
 
   def hello
-    @talks = Talk.all
-    # 채널이름과 이벤트 이름 설정
-    # JW-채널에서 JW-이벤트가 발생하면 다음과 같은 데이터를 날려라
-    # Pusher.trigger('JW-channel', 'JW-event', {
-    #   message: 'hello world'
-    # })
+    @talks = Talk.all.reverse
   end
 
   def add_comment
